@@ -1,0 +1,32 @@
+# Dart/Flutter
+.dart_tool/
+.packages
+build/
+pubspec.lock
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Claude
+.claude/
+
+# macOS
+.DS_Store
+
+# Example app build artifacts
+example/.dart_tool/
+example/build/
+example/ios/Pods/
+example/ios/Flutter/ephemeral/
+example/ios/.symlinks/
+example/macos/Pods/
+example/macos/Flutter/ephemeral/
+example/android/.gradle/
+example/android/local.properties
+example/linux/flutter/ephemeral/
+example/windows/flutter/ephemeral/
+example/pubspec.lock
+example/.metadata
+example/*.iml
