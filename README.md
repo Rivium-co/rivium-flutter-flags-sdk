@@ -76,8 +76,10 @@ await flags.refresh();
 
 ## Documentation
 
-For full documentation, visit [rivium.co/docs](https://rivium.co/docs).
-
+For full documentation, visit [rivium.co/docs](https://rivium.co/cloud/rivium-flags/docs/sdks-flutter).
+- [Rivium Cloud](https://rivium.co/cloud)
+- [Rivium Console](https://console.rivium.co)
+  
 ## License
 
 MIT License — see [LICENSE](LICENSE) for details.

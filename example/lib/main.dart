@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:rivium_flutter_flags/rivium_flutter_flags.dart';
 
+const _apiKey = 'YOUR_API_KEY_HERE'; // Get from Rivium Console → Flags → Settings
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await RiviumFeatureFlags.init(
     RiviumFeatureFlagsConfig(
-      apiKey: 'Your api key', // Replace with your API key
+      apiKey: _apiKey,
       debug: true,
     ),
     callback: (event, data) {
@@ -205,7 +207,7 @@ class _FlagTestPageState extends State<FlagTestPage> {
           // Instance may already be null after previous reset
         }
         final envConfig = RiviumFeatureFlagsConfig(
-          apiKey: 'YOUR_API_KEY',
+          apiKey: _apiKey,
           environment: env == 'none' ? null : env,
           debug: true,
           enableOfflineCache: false, // avoid cache interference between envs
@@ -231,7 +233,7 @@ class _FlagTestPageState extends State<FlagTestPage> {
     } catch (_) {}
     final reinited = await RiviumFeatureFlags.init(
       RiviumFeatureFlagsConfig(
-        apiKey: 'YOUR_API_KEY',
+        apiKey: _apiKey,
         environment: _selectedEnv == 'none' ? null : _selectedEnv,
         debug: true,
       ),
@@ -258,7 +260,7 @@ class _FlagTestPageState extends State<FlagTestPage> {
     // Re-init for next run
     final reinited2 = await RiviumFeatureFlags.init(
       RiviumFeatureFlagsConfig(
-        apiKey: 'YOUR_API_KEY',
+        apiKey: _apiKey,
         environment: _selectedEnv == 'none' ? null : _selectedEnv,
         debug: true,
       ),
@@ -287,7 +289,7 @@ class _FlagTestPageState extends State<FlagTestPage> {
     await RiviumFeatureFlags.instance.reset();
     await RiviumFeatureFlags.init(
       RiviumFeatureFlagsConfig(
-        apiKey: 'YOUR_API_KEY',
+        apiKey: _apiKey,
         environment: env == 'none' ? null : env,
         debug: true,
       ),
