@@ -1,18 +1,20 @@
 name: rivium_flutter_flags
-description: Feature Flags SDK for Flutter - Lightweight feature flag management with Rivium. Pure Dart, works on all platforms.
-version: 0.1.0
+description: Rivium Flags for Flutter - feature flags evaluated on the Rivium server, cached on the device. All Flutter platforms.
+version: 0.2.0
 homepage: https://rivium.co
 repository: https://github.com/Rivium-co/rivium-flutter-flags-sdk
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.13.0'
 
 dependencies:
+  flutter:
+    sdk: flutter
   http: ^1.1.0
-  crypto: ^3.0.3
   shared_preferences: ^2.2.0
-  connectivity_plus: ^6.0.0
 
 dev_dependencies:
+  flutter_test:
+    sdk: flutter
   lints: ^3.0.0
-  test: ^1.24.0
