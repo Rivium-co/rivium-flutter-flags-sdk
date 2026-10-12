@@ -25,7 +25,7 @@ import 'storage.dart';
 /// ```
 class RiviumFlags with WidgetsBindingObserver {
   /// SDK version, sent as `x-rivium-sdk: flutter/<version>`.
-  static const sdkVersion = '0.2.0';
+  static const sdkVersion = '0.2.1';
 
   static const _debounce = Duration(milliseconds: 250);
   static const _foregroundStaleAfter = Duration(minutes: 15);
@@ -255,22 +255,33 @@ class RiviumFlags with WidgetsBindingObserver {
 
   /// Sets the signed-in user and (when given) replaces the attributes, then
   /// fetches (debounced 250 ms). Results of the previous user are dropped.
+  ///
+  /// Sends no request when the user and the attributes are the same as before
+  /// and the results for them are already here (or on their way).
   Future<void> identify(String? userId, {Map<String, Object?>? attributes}) {
+    _ensureOpen();
+    final before = _requestKey();
     _setUser(userId);
     if (attributes != null) _attributes = Map.of(attributes);
-    return _contextChanged();
+    return _contextChanged(before);
   }
 
-  /// Sets or clears the signed-in user id, then fetches (debounced).
+  /// Sets or clears the signed-in user id, then fetches (debounced) if it
+  /// is another user.
   Future<void> setUserId(String? userId) {
+    _ensureOpen();
+    final before = _requestKey();
     _setUser(userId);
-    return _contextChanged();
+    return _contextChanged(before);
   }
 
-  /// Replaces the targeting attributes, then fetches (debounced).
+  /// Replaces the targeting attributes, then fetches (debounced) if their
+  /// content changed.
   Future<void> setAttributes(Map<String, Object?> attributes) {
+    _ensureOpen();
+    final before = _requestKey();
     _attributes = Map.of(attributes);
-    return _contextChanged();
+    return _contextChanged(before);
   }
 
   /// Sign-out: clears the user id, the attributes and the stored results,
@@ -473,8 +484,38 @@ class RiviumFlags with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _contextChanged() {
+  /// The current request as a string (equal contexts give equal strings), or
+  /// `null` when it cannot be encoded.
+  String? _requestKey() {
+    try {
+      return _canonicalJson(buildRequestBody());
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// True when the stored results were fetched for exactly this request.
+  bool _hasResultsFor(String? key) =>
+      key != null && _flags != null && _cachedRequestKey == key;
+
+  /// Called after identify / setUserId / setAttributes; [before] is the
+  /// request key from before the call.
+  Future<void> _contextChanged(String? before) {
     _ensureOpen();
+    final key = _requestKey();
+    if (key != null && key == before) {
+      // Same user and attributes: never a second request for them.
+      if (_debounceTimer != null) {
+        final waiter = Completer<void>();
+        _debounceWaiters.add(waiter);
+        return waiter.future;
+      }
+      final running = _inFlight;
+      if (running != null && _inFlightKey == key && _inFlightGen == _generation) {
+        return running;
+      }
+      if (_hasResultsFor(key)) return Future.value();
+    }
     _generation++;
     final waiter = Completer<void>();
     _debounceWaiters.add(waiter);
@@ -483,7 +524,9 @@ class RiviumFlags with WidgetsBindingObserver {
       final waiters = _debounceWaiters;
       _debounceWaiters = [];
       _debounceTimer = null;
-      _fetch().whenComplete(() {
+      // Changed and changed back: the results for this context are still here.
+      final next = _hasResultsFor(_requestKey()) ? Future<void>.value() : _fetch();
+      next.whenComplete(() {
         for (final w in waiters) {
           if (!w.isCompleted) w.complete();
         }

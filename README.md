@@ -23,7 +23,7 @@
 
 ```yaml
 dependencies:
-  rivium_flutter_flags: ^0.2.0
+  rivium_flutter_flags: ^0.2.1
 ```
 
 ```bash
@@ -105,9 +105,10 @@ flags.onError.listen((e) => print(e.statusCode)); // request failures
 await flags.refresh();                            // fetch now
 ```
 
-Results are fetched on `init`, on `identify` / `setUserId` / `setAttributes`, when the app returns to the
-foreground and the last fetch is older than 15 minutes, and on `refresh()`. Optional polling while in the
-foreground: `refreshIntervalSeconds: 300` (default 0 = off, minimum 60). **Each fetch is a billed evaluation
+Results are fetched on `init`, on `identify` / `setUserId` / `setAttributes` when the user or the attributes
+change (the same values again send no request), when the app returns to the foreground and the last fetch is
+older than 15 minutes, and on `refresh()`. Optional polling while in the foreground:
+`refreshIntervalSeconds: 300` (default 0 = off, minimum 60). **Each fetch is a billed evaluation
 request**, which is why polling is off by default.
 
 Offline or on errors the last good results keep being served. 429 and 5xx are retried with back-off

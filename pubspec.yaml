@@ -1,6 +1,6 @@
 name: rivium_flutter_flags
 description: Rivium Flags for Flutter - feature flags evaluated on the Rivium server, cached on the device. All Flutter platforms.
-version: 0.2.0
+version: 0.2.1
 homepage: https://rivium.co
 repository: https://github.com/Rivium-co/rivium-flutter-flags-sdk
 

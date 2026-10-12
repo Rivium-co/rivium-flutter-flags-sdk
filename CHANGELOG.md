@@ -1,3 +1,7 @@
+## 0.2.1
+
+- `identify`, `setUserId` and `setAttributes` no longer send a request when the user and the attributes are unchanged.
+
 ## 0.2.0
 
 Breaking release. See the README for the short migration from 0.1.x.
